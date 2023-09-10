@@ -1,11 +1,11 @@
 const ctx = document.getElementById('canvas').getContext('2d')
-const windowwidth = (canvas.width = window.innerWidth);
-const windowheight = (canvas.height = window.innerHeight);
+const windowwidth = (canvas.width = window.innerWidth)
+const windowheight = (canvas.height = window.innerHeight)
 let match = true
 
 class Racket{
-    xVel = 5
-    yVel = 40
+    xVel = 0
+    yVel = 0
     constructor(xPos,yPos,width,height,color,side){
         this.xPos = xPos
         this.yPos = yPos
@@ -15,25 +15,30 @@ class Racket{
         this.side = side
         if (this.side === 'left'){
             window.addEventListener('keydown', (event)=>{
-                switch (event.key) {
-                    case 'w':
-                        this.yPos -= this.yVel
-                        break
-                    case 's':
-                        this.yPos += this.yVel
-                        break
-                }
+                if (event.key === 'w'){this.yVel = -10}
+            })
+            window.addEventListener('keydown', (event) =>{
+                if (event.key === 's'){this.yVel = 10}
+            })
+            window.addEventListener('keyup', (event)=>{
+                if (event.key === 'w'){this.yVel = 0}
+            })
+            window.addEventListener('keyup', (event)=>{
+                if (event.key === 's'){this.yVel = 0}
             })
         }
         if (this.side === 'right'){
             window.addEventListener('keydown', (event)=>{
-                switch (event.key){
-                    case 'ArrowUp':
-                        this.yPos -= this.yVel
-                        break
-                    case 'ArrowDown':
-                        this.yPos += this.yVel
-                }
+                if (event.key === 'ArrowUp'){this.yVel = -10}
+            })
+            window.addEventListener('keydown', (event) =>{
+                if (event.key === 'ArrowDown'){this.yVel = 10}
+            })
+            window.addEventListener('keyup', (event)=>{
+                if (event.key === 'ArrowUp'){this.yVel = 0}
+            })
+            window.addEventListener('keyup', (event)=>{
+                if (event.key === 'ArrowDown'){this.yVel = 0}
             })
         }
     }
@@ -91,6 +96,10 @@ function loop(){
     ball.collide()
     ball.xPos += ball.xVel
     ball.yPos += ball.yVel
+
+    // Racket movement
+    racketLeft.yPos += racketLeft.yVel
+    racketRight.yPos += racketRight.yVel
 
     racketLeft.draw()
     racketRight.draw()
