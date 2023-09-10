@@ -1,27 +1,41 @@
 const ctx = document.getElementById('canvas').getContext('2d')
 const windowwidth = (canvas.width = window.innerWidth);
 const windowheight = (canvas.height = window.innerHeight);
-let lost = false
+let match = true
 
 class Racket{
-    xPos = 0
-    yPos = windowheight/2
     xVel = 5
-    yVel = 20
-    constructor(width,height,color){
+    yVel = 40
+    constructor(xPos,yPos,width,height,color,side){
+        this.xPos = xPos
+        this.yPos = yPos
         this.width = width
         this.height = height
         this.color = color
-        window.addEventListener('keydown', (event)=>{
-            switch (event.key) {
-                case 'w':
-                    this.yPos -= this.yVel
-                    break
-                case 's':
-                    this.yPos += this.yVel
-                    break
-            }
-        })
+        this.side = side
+        if (this.side === 'left'){
+            window.addEventListener('keydown', (event)=>{
+                switch (event.key) {
+                    case 'w':
+                        this.yPos -= this.yVel
+                        break
+                    case 's':
+                        this.yPos += this.yVel
+                        break
+                }
+            })
+        }
+        if (this.side === 'right'){
+            window.addEventListener('keydown', (event)=>{
+                switch (event.key){
+                    case 'ArrowUp':
+                        this.yPos -= this.yVel
+                        break
+                    case 'ArrowDown':
+                        this.yPos += this.yVel
+                }
+            })
+        }
     }
     draw(){
         ctx.beginPath()
@@ -30,30 +44,36 @@ class Racket{
     }
 }
 class Ball{
-    xPos = 400
-    yPos = 50
-    xVel = -1
-    yVel = 1
+    xPos = windowwidth/2
+    yPos = windowheight/2
+    xVel = -3
+    yVel = 3
     constructor(radius,color){
         this.radius=radius
         this.color=color
     }
     collide(){
-        if (this.xPos <= racket.xPos+racket.width){
-            if ((this.yPos > racket.yPos) && (this.yPos < racket.yPos + racket.height)){
+        if (this.xPos <= racketLeft.xPos+racketLeft.width){
+            if ((this.yPos > racketLeft.yPos) && (this.yPos < racketLeft.yPos + racketLeft.height)){
                 this.xVel = -(this.xVel)
             }
             else{ // TEMP -> add lost game state
                 console.log('lost')
-                this.radius = 300
+                match = false
+            }
+        }
+        if (this.xPos >= racketRight.xPos){
+            if ((this.yPos > racketRight.yPos) && (this.yPos < racketRight.yPos + racketRight.height)){
+                this.xVel = -(this.xVel)
+            }
+            else{ // TEMP -> add lost game state
+                console.log('lost')
+                match = false
             }
         }
         
         if ((this.yPos >= windowheight) || (this.yPos <= 0)){ // Bottom and Top side
             this.yVel = -(this.yVel)
-        }
-        if (this.xPos >= windowwidth){
-            this.xVel = -(this.xVel)
         }
     }
     draw(){
@@ -72,11 +92,17 @@ function loop(){
     ball.xPos += ball.xVel
     ball.yPos += ball.yVel
 
-    racket.draw()
+    racketLeft.draw()
+    racketRight.draw()
+
     ball.draw()
+    if (match === false){
+        return
+    }
     
     requestAnimationFrame(loop)
 }
-const racket = new Racket(20,360,'black')
-const ball = new Ball(10, 'red')
+const racketLeft = new Racket(0,windowheight/2,20,360,'black','left')
+const racketRight = new Racket(windowwidth-20,windowheight/2,20,360,'black','right')
+const ball = new Ball(10, 'blue')
 loop()
