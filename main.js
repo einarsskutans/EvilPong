@@ -3,6 +3,7 @@ const windowwidth = (canvas.width = window.innerWidth)
 const windowheight = (canvas.height = window.innerHeight)
 let gameOver = false
 let winner
+let bumped = false
 
 class Racket{
     xVel = 0
