@@ -1,3 +1,8 @@
+@font-face {
+    font-family: spacemono;
+    src: url(fonts/spacemono/SpaceMono-Regular.ttf);
+}
+
 html, body{
     margin:0;
     height: 100%;

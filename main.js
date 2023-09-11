@@ -1,7 +1,8 @@
 const ctx = document.getElementById('canvas').getContext('2d')
 const windowwidth = (canvas.width = window.innerWidth)
 const windowheight = (canvas.height = window.innerHeight)
-let match = true
+let gameOver = false
+let winner
 
 class Racket{
     xVel = 0
@@ -62,18 +63,20 @@ class Ball{
             if ((this.yPos > racketLeft.yPos) && (this.yPos < racketLeft.yPos + racketLeft.height)){
                 this.xVel = -(this.xVel)
             }
-            else{ // TEMP -> add lost game state
-                console.log('lost')
-                match = false
+            else{ // TEMP -> add gameOver game state
+                console.log(`gameOver = ${gameOver}`)
+                winner = 'right'
+                gameOver = true
             }
         }
         if (this.xPos >= racketRight.xPos){
             if ((this.yPos > racketRight.yPos) && (this.yPos < racketRight.yPos + racketRight.height)){
                 this.xVel = -(this.xVel)
             }
-            else{ // TEMP -> add lost game state
-                console.log('lost')
-                match = false
+            else{ // TEMP -> add gameOver game state
+                console.log(`gameOver = ${gameOver}`)
+                winner = 'left'
+                gameOver = true
             }
         }
         
@@ -89,7 +92,7 @@ class Ball{
     }
 }
 function loop(){
-    ctx.fillStyle = 'white'
+    ctx.fillStyle = 'white' 
     ctx.fillRect(0,0,windowwidth,windowheight)
 
     // Ball movement
@@ -105,11 +108,23 @@ function loop(){
     racketRight.draw()
 
     ball.draw()
-    if (match === false){
-        return
+    if (gameOver === true){
+        console.log(`${winner} wins`)
+        ctx.font = '60px spacemono' // Text
+        ctx.fillStyle = 'black'
+        ctx.textAlign = 'center'
+        ctx.fillText(`${winner} wins`, windowwidth/2, windowheight/2)
+        reload()
     }
     
     requestAnimationFrame(loop)
+}
+function sleep(ms){
+    return new Promise(resolve => setTimeout(resolve, ms))
+}
+async function reload(){
+    await sleep(1000)
+    location.reload()
 }
 const racketLeft = new Racket(0,windowheight/2,20,360,'black','left')
 const racketRight = new Racket(windowwidth-20,windowheight/2,20,360,'black','right')
