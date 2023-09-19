@@ -5,6 +5,10 @@ let gameOver = false
 let winner
 let bumped = false
 
+// Weird key solution
+let upkeyDownLeft = false
+let downkeyDownLeft = false
+
 class Racket{
     xVel = 0
     yVel = 0
@@ -17,16 +21,16 @@ class Racket{
         this.side = side
         if (this.side === 'left'){
             window.addEventListener('keydown', (event)=>{
-                if (event.key === 'w'){this.yVel = -10}
+                if (event.key === 'w'){this.yVel = -10;console.log(`${event}, vel ${this.yVel}`);upkeyDownLeft = true}
             })
             window.addEventListener('keydown', (event) =>{
-                if (event.key === 's'){this.yVel = 10}
+                if (event.key === 's'){this.yVel = 10;console.log(`${event}, vel ${this.yVel}`);downkeyDownLeft = true}
             })
             window.addEventListener('keyup', (event)=>{
-                if (event.key === 'w'){this.yVel = 0}
+                if ((event.key === 'w') && (downkeyDownLeft === false)){this.yVel = 0;console.log(`${event}, vel ${this.yVel}`)}
             })
             window.addEventListener('keyup', (event)=>{
-                if (event.key === 's'){this.yVel = 0}
+                if ((event.key === 's') && (upkeyDownLeft === false)){this.yVel = 0;console.log(`${event}, vel ${this.yVel}`)}
             })
         }
         if (this.side === 'right'){
@@ -87,7 +91,7 @@ class Ball{
     }
     draw(){
         ctx.beginPath()
-        ctx.fillStyle=this.color
+        ctx.fillStyle = this.color
         ctx.arc(this.xPos,this.yPos,this.radius, 0, 2*Math.PI)
         ctx.fill()
     }
@@ -115,7 +119,7 @@ function loop(){
         ctx.fillStyle = 'black'
         ctx.textAlign = 'center'
         ctx.fillText(`${winner} wins`, windowwidth/2, windowheight/2)
-        reload()
+        //reload()
     }
     
     requestAnimationFrame(loop)
@@ -129,5 +133,5 @@ async function reload(){
 }
 const racketLeft = new Racket(0,windowheight/2,20,360,'black','left')
 const racketRight = new Racket(windowwidth-20,windowheight/2,20,360,'black','right')
-const ball = new Ball(10, 'blue')
+const ball = new Ball(10, 'black')
 loop()
