@@ -21,16 +21,13 @@ class Racket{
         this.side = side
         if (this.side === 'left'){
             window.addEventListener('keydown', (event)=>{
-                if (event.key === 'w'){this.yVel = -10;console.log(`${event}, vel ${this.yVel}`);upkeyDownLeft = true}
+                if (event.key === 'w'){this.yVel = -10}
             })
             window.addEventListener('keydown', (event) =>{
-                if (event.key === 's'){this.yVel = 10;console.log(`${event}, vel ${this.yVel}`);downkeyDownLeft = true}
+                if (event.key === 's'){this.yVel = 10}
             })
-            window.addEventListener('keyup', (event)=>{
-                if ((event.key === 'w') && (downkeyDownLeft === false)){this.yVel = 0;console.log(`${event}, vel ${this.yVel}`)}
-            })
-            window.addEventListener('keyup', (event)=>{
-                if ((event.key === 's') && (upkeyDownLeft === false)){this.yVel = 0;console.log(`${event}, vel ${this.yVel}`)}
+            window.addEventListener('keyup', (event)=>{ // Sets velocity to 0 when keys released
+                if (event.key === 'w' || event.key === 's'){this.yVel = 0}
             })
         }
         if (this.side === 'right'){
@@ -40,13 +37,14 @@ class Racket{
             window.addEventListener('keydown', (event) =>{
                 if (event.key === 'ArrowDown'){this.yVel = 10}
             })
-            window.addEventListener('keyup', (event)=>{
-                if (event.key === 'ArrowUp'){this.yVel = 0}
-            })
-            window.addEventListener('keyup', (event)=>{
-                if (event.key === 'ArrowDown'){this.yVel = 0}
+            window.addEventListener('keyup', (event)=>{ // Sets velocity to 0 when keys released
+                if (event.key === 'ArrowUp' || event.key === 'ArrowDown'){this.yVel = 0}
             })
         }
+    }
+    collide(){
+        if (this.yPos <= 0){this.yPos = 0}
+        if (this.yPos >= windowheight - this.height){this.yPos = windowheight - this.height}
     }
     draw(){
         ctx.beginPath()
@@ -57,8 +55,8 @@ class Racket{
 class Ball{
     xPos = windowwidth/2
     yPos = windowheight/2
-    xVel = -3
-    yVel = 3
+    xVel = 3
+    yVel = this.xVel
     constructor(radius,color){
         this.radius=radius
         this.color=color
@@ -69,7 +67,6 @@ class Ball{
                 this.xVel = -(this.xVel)
             }
             else{ // TEMP -> add gameOver game state
-                console.log(`gameOver = ${gameOver}`)
                 winner = 'right'
                 gameOver = true
             }
@@ -79,7 +76,6 @@ class Ball{
                 this.xVel = -(this.xVel)
             }
             else{ // TEMP -> add gameOver game state
-                console.log(`gameOver = ${gameOver}`)
                 winner = 'left'
                 gameOver = true
             }
@@ -106,15 +102,17 @@ function loop(){
     ball.yPos += ball.yVel
 
     // Racket movement
+    console.log(racketLeft.yVel)
     racketLeft.yPos += racketLeft.yVel
     racketRight.yPos += racketRight.yVel
+    racketLeft.collide()
+    racketRight.collide()
 
     racketLeft.draw()
     racketRight.draw()
 
     ball.draw()
     if (gameOver === true){
-        console.log(`${winner} wins`)
         ctx.font = '60px spacemono' // Text
         ctx.fillStyle = 'black'
         ctx.textAlign = 'center'
@@ -131,7 +129,7 @@ async function reload(){
     await sleep(1000)
     location.reload()
 }
-const racketLeft = new Racket(0,windowheight/2,20,360,'black','left')
-const racketRight = new Racket(windowwidth-20,windowheight/2,20,360,'black','right')
+const racketLeft = new Racket(0,windowheight/2,20,180,'black','left')
+const racketRight = new Racket(windowwidth-20,windowheight/2,20,180,'black','right')
 const ball = new Ball(10, 'black')
 loop()
