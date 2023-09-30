@@ -3,11 +3,6 @@ const windowwidth = (canvas.width = window.innerWidth)
 const windowheight = (canvas.height = window.innerHeight)
 let gameOver = false
 let winner
-let bumped = false
-
-// Weird key solution
-let upkeyDownLeft = false
-let downkeyDownLeft = false
 
 class Racket{
     xVel = 0
@@ -57,9 +52,6 @@ class Ball{
     yPos = windowheight/2
     xVel = 4
     yVel = this.xVel
-    maxVel = 12
-    freqVel = 3 // Frequency, how many hit to increase velocity
-    freqIterVel = 0 // Current iteration
     constructor(radius,color){
         this.radius=radius
         this.color=color
@@ -68,12 +60,6 @@ class Ball{
         if (this.xPos <= racketLeft.xPos+racketLeft.width){
             if ((this.yPos > racketLeft.yPos) && (this.yPos < racketLeft.yPos + racketLeft.height)){
                 this.xVel = -(this.xVel)
-
-                this.freqIterVel = this.freqIterVel + 1
-                if (this.freqIterVel === this.freqVel){
-                    this.freqIterVel = 0
-                    this.xVel = this.xVel + 1
-                }
             }
             else{ // TEMP -> add gameOver game state
                 winner = 'right'
@@ -83,12 +69,6 @@ class Ball{
         if (this.xPos >= racketRight.xPos){
             if ((this.yPos > racketRight.yPos) && (this.yPos < racketRight.yPos + racketRight.height)){
                 this.xVel = -(this.xVel)
-
-                this.freqIterVel = this.freqIterVel + 1
-                if (this.freqIterVel === this.freqVel){
-                    this.freqIterVel = 0
-                    this.xVel = this.xVel - 1
-                }
             }
             else{ // TEMP -> add gameOver game state
                 winner = 'left'
